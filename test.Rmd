@@ -1,0 +1,676 @@
+---
+title: "Supervised Learning project - 2020 Elections in the US"
+subtitle: "Statistical Learning - UC3M"
+author: "Jorge Garcelán Gómez"
+date: "10/11/2021"
+output: 
+  github_document:
+      theme: readable
+      code_folding: show
+      number_sections: true
+      toc: true
+      toc_depth: 3
+      toc_float:
+            collapsed: true
+            smooth_scroll: false
+editor_options:
+  chunk_output_type: console
+---
+
+```{r global_options, include=T, echo = F}
+knitr::opts_chunk$set(echo = T, warning=FALSE, message=FALSE)
+```
+
+```{r echo=FALSE}
+setwd("C:/Users/jorge/Desktop/UNI/2-SEGUNDO/2-1-STATISTICS/HOMEWORK/2-SUPERVISED_LEARNING")
+```
+
+
+```{r echo=FALSE}
+# clean the workspace:
+rm(list=ls())
+```
+
+This is the second part of project 1 that consisted on applying Unsupervised learning techniques, In this case, we will consider the same dataset as before just because we have already understood the data and in fact, it has a non-numerical variable, **Public_Private**, that can be used as a response to classify.  
+
+Hence, the objective of the project is that we could classify observations, *i.e.* universities, according to the type (public/private). This would gave us a wider look and, hopefully, a better understanding of the post-secondary education in the United States.  
+
+Notice that sections *1. Data* and *2. Exploratory data analysis* are the same as in the previous project.  
+# Data: 
+
+I have considered a dataset that can be found in the web of the Integrated Postsecondary Education Data System, IPEDS. This dataset was also considered in the USNEWS for the ASA Statistical Graphics Section's of 1995 Data Analysis Exposition. This dataset contains information on over 1000 American colleges and universities. The dataset can be found in the following link: <https://nces.ed.gov/ipeds/datacenter/InstitutionByGroup.aspx>. The following variables have been considered:  
+
+
+Variable         | Information
+---------------- | ------------
+FICE             | Federal ID number
+X                | College name
+State            | Postal code of the state
+Public/private   | Indicator of public=1, private=2
+Av_Math_SAT      | Average Math SAT score
+Av_Verbal_SAT    | Average Verbal SAT score
+Av_Comb_SAT      | Average Combined SAT score
+Av_ACT_score     | Average ACT score
+1Q_Math_SAT      | First quantile - Math SAT
+3Q_Math_SAT      | Third quantile - Math SAT
+1Q_Verbal_SAT    | First quantile - Verbal SAT
+3Q_Verbal_SAT    | Third quantile - Verbal SAT
+1Q_ACT           | First quantile - ACT
+3Q_ACT           | Third quantile - ACT
+Apps             | Number of applications received
+Accepted         | Number of applicants accepted
+Enrolled         | Number of new students enrolled
+Top10perc        | Pct. new students from top 10% of H.S. class
+Top25perc        | Pct. new students from top 25% of H.S. class
+Full_Under       | Number of fulltime undergraduates
+Part_Under       | Number of parttime undergraduates
+In-state         | In-state tuition
+Out-of-state     | Out-of-state tuition
+Room_board       | Room and board costs
+Room             | Room costs
+Board            | Board costs
+Fees             | Additional fees
+Book             | Estimated book costs
+Personal         | Estimated personal spending
+Faculty_PhD      | Pct. of faculty with Ph.D.'s
+Faculty_Terminal | Pct. of faculty with terminal degree
+SF_Ratio         | Student/faculty ratio
+Perc_Donate      | Pct.alumni who donate
+Instructional    | Instructional expenditure per student
+Grad_Rate        | Graduation rate
+
+
+
+## Libraries:
+```{r}
+library(tidyverse)
+library(stringr)
+library(htmltab)
+library(ggplot2)
+#detach("package:MASS", unload = TRUE)
+```
+
+
+
+```{r}
+# data = read.csv("votes.csv", header = T, sep = ",")
+# info = read.csv("county_facts_dictionary.csv", header = T, sep = ",")
+
+```
+
+
+```{r}
+# data2 = read.csv("countypres_2000-2020.csv", header = T, sep = ",")
+# 
+# 
+# data2 = data2 %>% filter(data2$party %in% c("DEMOCRAT", "REPUBLICAN")) %>% select(1,5,7,8,9,10)
+# 
+# data2 = data2  %>% mutate(perc = data2$candidatevotes / data2$totalvotes)
+
+```
+
+
+```{r}
+all = read.csv("county_complete.csv", header = T, sep = ",")
+all = all %>% select(1,2,3,which(grepl("2019",colnames(all))))
+
+colnames(all)[3] = "county"
+```
+
+
+https://www2.census.gov/programs-surveys/popest/technical-documentation/file-layouts/2010-2020/cc-est2020-alldata6.pdf  
+
+The key for AGEGRP is as follows:
+0 = Total
+1 = Age 0 to 4 years
+2 = Age 5 to 9 years
+3 = Age 10 to 14 years
+4 = Age 15 to 19 years
+5 = Age 20 to 24 years
+6 = Age 25 to 29 years
+7 = Age 30 to 34 years
+8 = Age 35 to 39 years
+9 = Age 40 to 44 years
+10 = Age 45 to 49 years
+11 = Age 50 to 54 years
+12 = Age 55 to 59 years
+13 = Age 60 to 64 years
+14 = Age 65 to 69 years
+15 = Age 70 to 74 years
+16 = Age 75 to 79 years
+17 = Age 80 to 84 years
+18 = Age 85 years or older
+
+```{r}
+# all2 = read.csv("CC-EST2020-ALLDATA6.csv")
+# 
+# all2[,6:50] = lapply(all2[,6:50], function(x) as.numeric(as.character(x)))
+# 
+# # 7/1/2020 population estimate:
+# all2 = all2 %>% filter(YEAR == 14)
+# # group AGEGRP:
+# all2 = all2 %>% filter(AGEGRP==0 | AGEGRP>=4)
+# all2$AGEGRP = factor(ifelse(all2$AGEGRP>=4 & all2$AGEGRP<=7, "young", ifelse(all2$AGEGRP>=8 & all2$AGEGRP<=12, "adult", ifelse(all2$AGEGRP>=13, "old", "total"))))
+# POP_young = all2 %>% filter(AGEGRP=="young") %>% group_by(CTYNAME, STNAME) %>% summarise(POP=sum(TOT_POP))
+# POP_adult = all2 %>% filter(AGEGRP=="adult") %>% group_by(CTYNAME, STNAME) %>% summarise(POP=sum(TOT_POP))
+# POP_old = all2 %>% filter(AGEGRP=="old") %>% group_by(CTYNAME, STNAME) %>% summarise(POP=sum(TOT_POP))
+# 
+# all2 = all2 %>% filter(AGEGRP == "total")
+# 
+# all2$POP_young = POP_young$POP
+# all2$POP_adult = POP_adult$POP
+# all2$POP_old = POP_old$POP
+# 
+# all2$YEAR = NULL
+# all2$AGEGRP = NULL
+# 
+# # select variables:
+# all2 = all2 %>% select(c(STNAME, CTYNAME, TOT_POP, WA_MALE, WA_FEMALE, BA_MALE, BA_FEMALE, IA_MALE, IA_FEMALE, AA_MALE, AA_FEMALE, NA_MALE, NA_FEMALE, H_MALE, H_FEMALE))
+```
+
+
+
+
+
+# counties votes:
+```{r}
+d1 = read.csv("2020_US_County_Level_Presidential_Results.csv")
+# d2 = read.csv("US_County_Level_Presidential_Results_08-16.csv")
+
+d1 = d1 %>% mutate(votes_others=total_votes - (votes_gop+votes_dem)) %>% select(1,2,3,4,5,6,11)
+colnames(d1) = c("state", "fips_code", "county", "Trump_2020", "Biden_2020", "Total_2020", "Other_2020")
+
+# d2 = d2 %>% mutate(Obama_2012 = dem_2012/total_2012, Romney_2012 = gop_2012/total_2012, Other_2012 = oth_2012/total_2012,
+#                    Clinton_2016 = dem_2016/total_2016, Trump_2016 = gop_2016/total_2016, Other_2016 = oth_2016/total_2016)
+
+# d2 = d2 %>% mutate(Obama_2012 = Obama_2012 + Other_2012/2, Romney_2012 = Romney_2012 + Other_2016/2,
+#                    Clinton_2016 = Clinton_2016 + Other_2016/2, Trump_2016 = Trump_2016 + Other_2016/2) %>%   select(1,2,15,16,18,19)
+
+
+
+# d = left_join(d2,d1)
+
+```
+
+
+```{r}
+data = inner_join(d1, all, by = c("county","state"))
+```
+
+```{r}
+# with perc:
+votes = data %>% select(1,4,5,6,7)
+
+data = data %>% mutate(Biden_2020 = Biden_2020/Total_2020) %>% select(-c(4,6,7))
+```
+
+```{r}
+# with total votes:
+# votes = data %>% select(1,4,5,6)
+# 
+# total_votes = data$Total_2020
+# data = data %>% select(-c(4,6))
+```
+
+
+#### counties data:
+```{r}
+# c = read.csv("co-est2020-alldata.csv")
+# c = c %>% filter(COUNTY!=0) %>% select(6, 7, which(grepl("2011", colnames(c))), which(grepl("2015", colnames(c))), which(grepl("2019", colnames(c))))
+# 
+# colnames(c)[1] = "state"
+# colnames(c)[2] = "county"
+```
+
+
+```{r}
+# data = inner_join(d, c, by = c("county","state"))
+```
+
+
+## Insights:  
+
+### Ethnic:
+```{r}
+# White people:
+ggplot(data, aes(x=white_2019, y=Biden_2020)) +
+  geom_point(alpha=0.8, aes(group=state, colour=state, fill=state),  show.legend = FALSE) + facet_wrap(~state) + geom_hline(yintercept = 0.50 , linetype="dashed", color="red") + geom_vline(xintercept = 50 , linetype="dashed", color="red") + ggtitle("Distribution of black vote")
+
+# Black people:
+ggplot(data, aes(x=black_2019, y=Biden_2020)) +
+  geom_point(alpha=0.8, aes(group=state, colour=state, fill=state),  show.legend = FALSE) + facet_wrap(~state) + geom_hline(yintercept = 0.50 , linetype="dashed", color="red") + geom_vline(xintercept = 50 , linetype="dashed", color="red") + ggtitle("Distribution of black vote")
+
+# Hispanic:
+ggplot(data, aes(x=hispanic_2019, y=Biden_2020)) +
+  geom_point(alpha=0.8, aes(group=state, colour=state, fill=state),  show.legend = FALSE) + facet_wrap(~state) + geom_hline(yintercept = 0.50 , linetype="dashed", color="red") + geom_vline(xintercept = 50 , linetype="dashed", color="red") + ggtitle("Distribution of hispanic vote")
+
+# Asian:
+ggplot(data, aes(x=asian_2019, y=Biden_2020)) +
+  geom_point(alpha=0.8, aes(group=state, colour=state, fill=state),  show.legend = FALSE) + facet_wrap(~state) + geom_hline(yintercept = 0.50 , linetype="dashed", color="red") + geom_vline(xintercept = 50 , linetype="dashed", color="red") + ggtitle("Distribution of hispanic vote")
+
+# Native:
+ggplot(data, aes(x=native_2019, y=Biden_2020)) +
+  geom_point(alpha=0.8, aes(group=state, colour=state, fill=state),  show.legend = FALSE) + facet_wrap(~state) + geom_hline(yintercept = 0.50 , linetype="dashed", color="red") + geom_vline(xintercept = 50 , linetype="dashed", color="red") + ggtitle("Distribution of hispanic vote")
+```
+
+### Age:
+```{r}
+# elderly people:
+ggplot(data, aes(x=age_over_65_2019, y=Biden_2020)) +
+  geom_point(alpha=0.8, aes(group=state, colour=state, fill=state),  show.legend = FALSE) + facet_wrap(~state) + geom_hline(yintercept = 0.50 , linetype="dashed", color="red") + geom_vline(xintercept = 50 , linetype="dashed", color="red") + ggtitle("Distribution of black vote")
+```
+
+### Family:
+```{r}
+# size:
+ggplot(data, aes(x=avg_family_size_2019, y=Biden_2020)) +
+  geom_point(alpha=0.8, aes(group=state, colour=state, fill=state),  show.legend = FALSE) + facet_wrap(~state) + geom_hline(yintercept = 0.50 , linetype="dashed", color="red") + geom_vline(xintercept = 50 , linetype="dashed", color="red") + ggtitle("Distribution of black vote")
+
+# bachelors:
+ggplot(data, aes(x=bachelors_2019, y=Biden_2020)) +
+  geom_point(alpha=0.8, aes(group=state, colour=state, fill=state),  show.legend = FALSE) + facet_wrap(~state) + geom_hline(yintercept = 0.50 , linetype="dashed", color="red") + geom_vline(xintercept = 50 , linetype="dashed", color="red") + ggtitle("Distribution of black vote")
+
+# computer:
+ggplot(data, aes(x=household_has_computer_2019, y=Biden_2020)) +
+  geom_point(alpha=0.8, aes(group=state, colour=state, fill=state),  show.legend = FALSE) + facet_wrap(~state) + geom_hline(yintercept = 0.50 , linetype="dashed", color="red") + geom_vline(xintercept = 50 , linetype="dashed", color="red") + ggtitle("Distribution of hispanic vote")
+
+# income:
+ggplot(data, aes(x=median_household_income_2019, y=Biden_2020)) +
+  geom_point(alpha=0.8, aes(group=state, colour=state, fill=state),  show.legend = FALSE) + facet_wrap(~state) + geom_hline(yintercept =  0.50, linetype="dashed", color="red") + geom_vline(xintercept = median(data$mean_household_income_2019), linetype="dashed", color="red") + ggtitle("Distribution of hispanic vote")
+
+# per_capita:
+ggplot(data, aes(x=per_capita_income_2019, y=Biden_2020)) +
+  geom_point(alpha=0.8, aes(group=state, colour=state, fill=state),  show.legend = FALSE) + facet_wrap(~state) + geom_hline(yintercept = 0.50 , linetype="dashed", color="red") + geom_vline(xintercept = median(data$per_capita_income_2019), linetype="dashed", color="red") + ggtitle("Distribution of per_capita_income vote")
+
+# poverty:
+ggplot(data, aes(x=poverty_2019, y=Biden_2020)) +
+  geom_point(alpha=0.8, aes(group=state, colour=state, fill=state),  show.legend = FALSE) + facet_wrap(~state) + geom_hline(yintercept = 0.50 , linetype="dashed", color="red") + ggtitle("Distribution of poverty vote")
+```
+
+# Data Preprocessing:  
+
+Before starting with the models we need to explore and modify the dataset in order to have a nice and clean input.
+
+
+## Discard not interesting variables:  
+
+Once we have the data loaded, we are going to change the names of the variables and discard some of them that are not interesting for the project:
+
+```{r}
+states_county = data$state
+fips_county = data$fips_code
+names_county = data$county
+
+data$state = NULL
+data$fips_code = NULL
+data$county = NULL
+data$fips = NULL
+
+# data$Romney_2012 = NULL
+# data$Trump_2016 = NULL
+# data$Trump_2020 = NULL
+# data$Obama_2012 = NULL
+# data$Clinton_2016 = NULL
+```
+
+
+
+## Missing Values, NAs:  
+We check whether if the data have missing values (NAs) or not, and where. First, we are going to create a copy, **full\_data**, of **data** in order to compare later some values.  
+
+```{r echo=FALSE}
+# full_data = data
+library(VIM)
+```
+
+Next, using the **VIM** package we can see in a graph the distribution of NAs and the missing values for each variable. We see that in 4 variables the percentage of missing data is around 10-20% but in others lower than 5%. For this reason, we can consider a threshold (for example the value for **Grad\_Rate**, because from there the distribution is more stable) for removing observations that are NA regarding the variables which percentage of NA is higher than that threshold.  
+```{r}
+# plot of NAs:
+na_plot = aggr(data, col=c('#69b3a2','red'), numbers=TRUE, sortVars=TRUE, labels=names(data), cex.axis=.7, gap=3, ylab=c("Histogram of NAs","Pattern"))
+```
+
+```{r echo=FALSE}
+library(mice)
+```
+
+```{r results='hide'}
+# model:
+mice = mice(data, method = 'rf')
+mice.com = mice::complete(mice)
+```
+
+```{r}
+# variables that have NAs:
+data$mean_work_travel_2019 = mice.com$mean_work_travel_2019
+data$poverty_2019 = mice.com$poverty_2019
+data$poverty_65_and_over_2019 = mice.com$poverty_65_and_over_2019
+data$poverty_under_18_2019 = mice.com$poverty_under_18_2019
+# plot without NAs
+na_plot = aggr(data, col=c('#69b3a2','red'), numbers=TRUE, sortVars=TRUE, labels=names(data), cex.axis=.7, gap=3, ylab=c("Histogram of NAs","Pattern"))
+```
+
+# Regression:  
+
+
+
+## Libraries:  
+```{r}
+library(MASS) # puesto aquí pq incorpora una funcion que enmascara la funcion select de tidyverse
+library(caret)
+library(e1071)
+```
+
+
+```{r}
+library(GGally)
+ggcorr(data, label = T)
+```
+
+```{r}
+corr_votes = sort(cor(data)["Biden_2020",], decreasing = T)
+corr=data.frame(corr_votes)
+ggplot(corr,aes(x = row.names(corr), y = corr_votes)) + 
+  geom_bar(stat = "identity", fill = "lightblue") + 
+  scale_x_discrete(limits= row.names(corr)) +
+  labs(x = "", y = "Biden_2020", title = "Correlations") + 
+  theme(plot.title = element_text(hjust = 0, size = rel(1.5)),
+        axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+## Split train/test:  
+Before starting the models we need to first prepare the data in order to divide it into *train* and *test* datasets.
+```{r}
+idx = createDataPartition(data$Biden_2020, p = 0.8, list = FALSE)
+data.train = data[idx,]
+data.test = data[-idx,]
+summary(data.train)
+```
+
+## Insights:  
+```{r}
+# ggplot(data.train, aes(Total_Under)) + geom_density(aes(group=Public_Private, colour=Public_Private, fill=Public_Private), alpha=0.1) + ggtitle("Total_Under vs Public_Private")
+# 
+# ggplot(data.train, aes(Acc_Rate)) + geom_density(aes(group=Public_Private, colour=Public_Private, fill=Public_Private), alpha=0.1) + ggtitle("Acc_Rate vs Public_Private")
+# 
+# ggplot(data.train, aes(TotalCost)) + geom_density(aes(group=Public_Private, colour=Public_Private, fill=Public_Private), alpha=0.1) + ggtitle("TotalCost vs Public_Private")
+```
+
+
+
+```{r}
+# TYPE HERE YOUR REGRESSION MODEL
+linFit = lm(Biden_2020~., data.train)
+summary(linFit)
+```
+
+Insights? R^2 can be considered as 0, so this variable is completely useless for predicting. However, the betas are highly important (***).  
+
+## Prediction
+
+```{r}
+# Take care: output is in logs
+predictions = predict(linFit, data.test)
+cor(data.test$Biden_2020, predictions)^2 # R^2 in testing set
+```
+
+```{r}
+# transform predictions that are in percentage to votes:
+predictions = predictions * votes$Total_2020[-idx]
+```
+
+
+```{r}
+# all votes per county but using predictions:
+votes_pred = votes$Biden_2020
+votes_pred[-idx] = predictions
+votes_pred = as.integer(votes_pred)
+# check results:
+votes_pred == votes$Biden_2020
+```
+
+
+## states
+```{r}
+library(usmap)
+library(ggplot2)
+library(ggpubr)
+
+# pred:
+df5 = data.frame(votes = votes_pred, total = votes$Total_2020, other = votes$Other_2020, state=states_county)  %>% group_by(state)  %>%
+  summarise(Biden = sum(votes)/sum(total), Other = sum(other)/sum(total))
+# p5 = plot_usmap(data=df5, values = "Biden", labels = TRUE) + labs(title = "Predicted winner")
+
+# actual:
+df6 = data.frame(votes = votes$Biden_2020, total = votes$Total_2020, other = votes$Other_2020, state=states_county)  %>% group_by(state)  %>%
+  summarise(Biden = sum(votes)/sum(total), Other = sum(other)/sum(total))
+# p6 = plot_usmap(data=df6, values = "Biden", labels = TRUE) + labs(title = "Actual winner")
+
+# plot:
+# ggarrange(p5, p6, ncol = 2, nrow = 1)
+```
+
+```{r}
+# pred:
+df5$Trump = 1-df5$Biden-df5$Other
+df5$winner = factor(ifelse(df5$Biden < df5$Trump, "Trump","Biden"))
+p5 = plot_usmap(data=df5, values = "winner", labels = TRUE) + scale_fill_manual(values = c("#377eb8", "#e41a1c"), name = "Winner") + labs(title = "Predicted winner")
+
+# actual:
+df6$Trump = 1-df6$Biden-df6$Other
+df6$winner = factor(ifelse(df6$Biden < df6$Trump, "Trump","Biden"))
+p6 = plot_usmap(data=df6, values = "winner", labels = TRUE) + scale_fill_manual(values = c("#377eb8", "#e41a1c"), name = "Winner") + labs(title = "Actual winner")
+
+# plot:
+ggarrange(p5, p6, ncol = 2, nrow = 1)
+```
+
+## winner elections:
+
+```{r}
+detach("package:MASS", unload = TRUE)
+```
+
+```{r}
+seats = read.csv("seats2020.csv")
+colnames(seats) = c("state", "reps", "peoplePerElector", "Pop")
+seats = seats %>% select(1,2)
+seats$reps[which(seats$state=="DC")] == 3
+
+# pred:
+df5 = left_join(df5, seats)
+df5$reps[which(is.na(df5$reps))] = 0
+president_pred = df5 %>% group_by(winner) %>% summarise(seats = sum(reps))
+
+# actual:
+df6 = full_join(df6, seats)
+df6$reps[which(is.na(df6$reps))] = 0
+president = df6 %>% group_by(winner) %>% summarise(seats = sum(reps))
+
+
+
+president_pred
+president
+
+president_pred[1,2]/president[1,2]
+
+```
+
+
+
+
+
+
+
+
+# Classification:  
+```{r}
+library(MASS) # puesto aquí pq incorpora una funcion que enmascara la funcion select de tidyverse
+library(caret)
+library(e1071)
+```
+
+```{r}
+data.class = data
+# data.class$Win = factor(ifelse(data.class$Trump >= 0.55, "Red", ifelse(data.class$Trump <= 0.45, "Blue", "Purple")))
+# data.class$Win = factor(ifelse(data.class$Biden_2020 < 0.49, "Trump","Biden"))
+data.class$Win = factor(ifelse(votes$Biden_2020 < votes$Trump_2020, "Trump","Biden"))
+
+levels(data.class$Win)
+
+data.class$Biden_2020 = NULL
+```
+
+
+```{r}
+# split between training and testing sets
+idx = createDataPartition(data.class$Win, p = 0.8, list = FALSE)  # 80% for training
+
+class.train = data.class[idx,]
+class.test = data.class[-idx,]
+
+table(class.train$Win)
+
+```
+
+## Bayes Classifiers
+
+### LDA
+
+```{r}
+lda.model <- lda(Win ~ ., data=class.train)
+lda.model
+
+probability = predict(lda.model, newdata=class.test)$posterior
+head(probability)
+```
+
+```{r}
+prediction = predict(lda.model, newdata=class.test)$class
+prediction
+```
+
+#### Performance
+
+The confusion matrix: predictions in rows, true values in columns (but we can change the order)
+
+```{r}
+confusionMatrix(prediction, class.test$Win)$table
+confusionMatrix(prediction, class.test$Win)$overall[1]
+```
+
+```{r}
+detach("package:MASS", unload = TRUE)
+```
+
+
+
+#### Prediction counties:
+```{r}
+# pred:
+df3 = data.frame(winner=prediction, fips=fips_county[-idx])
+p3 = plot_usmap(data=df3, values = "winner") + scale_fill_manual(values = c("#377eb8", "#e41a1c"), name = "Winner") + labs(title = "Predicted winner")
+
+# actual:
+df4 = data.frame(winner=data.class$Win[-idx], fips=fips_county[-idx])
+p4 = plot_usmap(data=df4, values = "winner") + scale_fill_manual(values = c("#377eb8", "#e41a1c"), name = "Winner") + labs(title = "Actual winner")
+
+ggarrange(p3, p4, ncol = 2, nrow = 1)
+```
+
+#### Predictions with all counties:
+```{r}
+# pred:
+win_pred = data.class$Win
+win_pred[-idx] = prediction
+
+df7 = data.frame(winner = win_pred, fips=fips_county)
+p7 = plot_usmap(data=df7, values = "winner") + scale_fill_manual(values = c("#377eb8", "#e41a1c"), name = "Winner") + labs(title = "Predicted winner")
+
+# actual:
+df8 = data.frame(winner = data.class$Win, fips=fips_county)
+p8 = plot_usmap(data=df8, values = "winner") + scale_fill_manual(values = c("#377eb8", "#e41a1c"), name = "Winner") + labs(title = "Actual winner")
+
+
+ggarrange(p7, p8, ncol = 2, nrow = 1)
+
+# counties that changed:
+which(df7$winner!=df8$winner)
+```
+
+
+#### Winner per state:
+```{r}
+# # actual:
+# 
+# votes = votes %>% group_by(state) %>% summarise(Trump_2020=sum(Trump_2020), Biden_2020 = sum(Biden_2020), Total_2020 = sum(Total_2020)) %>% mutate(perc_Trump=Trump_2020/Total_2020, perc_Biden=Biden_2020/Total_2020)
+# votes = votes  %>% mutate( winner=factor(ifelse(votes$perc_Biden < votes$perc_Trump, "Trump","Biden")))
+# 
+# 
+# #pred:
+# pred_data = data.frame(state = states_county, winner = data$Win)
+# pred_data$winner[-idx] = prediction
+# t1 = table(pred_data)
+# t = as.data.frame(factor(ifelse(t1[,1]<t1[,2], "Trump","Biden")))
+# t$state = row.names(t)
+# colnames(t) = c("winner", "state")
+# 
+# #plots:
+# p7 = plot_usmap(data=votes, values = "winner", labels = TRUE) + labs(title = "Actual winner")
+# p6 = plot_usmap(data=t, values = "winner", labels = TRUE) + labs(title = "Predicted winner")
+# 
+# ggarrange(p6, p7, ncol = 2, nrow = 1)
+```
+
+
+```{r}
+# t1 = data.frame(state=states_county, winner=class_pred, votes=)
+```
+
+
+```{r}
+
+class_pred = data.class$Win
+class_pred[-idx] = prediction
+# check results:
+class_pred == data.class$Win
+
+t1 = votes %>% select(1,4)
+t1$winner = class_pred
+t1 = t1 %>% group_by(state, winner) %>% summarise(votes=sum(Total_2020))
+
+idx_one = which(t1$state %in% c("District of Columbia", "Massachusetts", "Oklahoma", "Rhode Island", "West Virginia"))
+one_winner = t1$winner[idx_one]
+df1 = t1 %>% group_by(state) %>% summarise(winner=t1$winner[which.max(t1$votes[which(t1$state==state)])])
+df1$winner[which(df1$state %in% c("District of Columbia", "Massachusetts", "Oklahoma", "Rhode Island", "West Virginia"))] = one_winner
+# pred:
+
+# getmode <- function(v) {
+#    uniqv <- unique(v)
+#    uniqv[which.max(tabulate(match(v, uniqv)))]
+# }
+# 
+# df1 = data.frame(state=states_county, winner=class_pred) %>% group_by(state) %>% summarise(winner=getmode(winner))
+p1 = plot_usmap(data=df1, values = "winner", labels = TRUE) + scale_fill_manual(values = c("#377eb8", "#e41a1c"), name = "Winner") + labs(title = "Predicted winner") 
+
+# actual:
+df2 = df6
+p2 = plot_usmap(data=df2, values = "winner", labels = TRUE) + scale_fill_manual(values = c("#377eb8", "#e41a1c"), name = "Winner") + labs(title = "Actual winner")
+
+# plot:
+ggarrange(p1, p2, ncol = 2, nrow = 1)
+```
+
+#### Winner elections:
+```{r}
+# pred:
+df7 = full_join(df1, seats)
+df7$reps[which(df7$state=="District of Columbia")]=3
+president_class_pred = df7 %>% group_by(winner) %>% summarise(seats = sum(reps))
+
+# actual:
+president_class = president
+
+president_class_pred
+president_class
+```
+
