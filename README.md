@@ -1,37 +1,4 @@
 # usuniversities
----
-title: "Unsupervised Learning project - Universities in the US"
-subtitle: "Statistical Learning - UC3M"
-author: "Jorge Garcelán Gómez"
-date: "30/10/2021"
-output: 
-  html_document:
-      theme: readable
-      code_folding: show
-      number_sections: true
-      toc: true
-      toc_depth: 3
-      toc_float:
-            collapsed: true
-            smooth_scroll: false
-
-editor_options:
-  chunk_output_type: console
----
-
-```{r global_options, include=T, echo = F}
-knitr::opts_chunk$set(echo = T, warning=FALSE, message=FALSE)
-```
-
-```{r echo=FALSE}
-setwd("C:/Users/jorge/Desktop/UNI/2-SEGUNDO/2-1-STATISTICS/HOMEWORK/College")
-```
-
-
-```{r echo=FALSE}
-# clean the workspace:
-rm(list=ls())
-```
 
 The objectives of this work is to analyze data from universities in the US by applying unsupervised learning techniques, such as PCA, FA and clustering. Our intentions with the project is that we could separate observations, *i.e.* universities, according to the type (public/private) or even to how good the university is. This would gave us a wider look and, hopefully, a better understanding of the post-secondary education in the United States.  
 
