@@ -2,6 +2,9 @@
 
 The objectives of this work is to analyze data from universities in the US by applying unsupervised learning techniques, such as PCA, FA and clustering. Our intentions with the project is that we could separate observations, *i.e.* universities, according to the type (public/private) or even to how good the university is. This would gave us a wider look and, hopefully, a better understanding of the post-secondary education in the United States.  
 
+# Attributions: 
+Please, refer to the original creator, i.e. me (Jorge Garcelán), for any reproduction of this project.
+
 
 # Data: 
 
