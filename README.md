@@ -1,47 +1,64 @@
-# usuniversities
+# 🎓 US Universities Analysis
 
-The objectives of this work is to analyze data from universities in the US by applying unsupervised learning techniques, such as PCA, FA and clustering. Our intentions with the project is that we could separate observations, *i.e.* universities, according to the type (public/private) or even to how good the university is. This would gave us a wider look and, hopefully, a better understanding of the post-secondary education in the United States.  
+This project focuses on analyzing data from over 1000 universities in the United States using **unsupervised learning techniques** such as Principal Component Analysis (PCA), Factor Analysis (FA), and clustering. The goal is to categorize universities by key characteristics, such as whether they are public or private, and measure their quality based on several academic and financial variables. Through this analysis, we aim to gain a broader understanding of the U.S. post-secondary education system, providing insights into the factors that differentiate universities.
 
-# Attributions: 
+## ✨ Objectives
+
+- Use **PCA** to reduce the dimensionality of the data while retaining the most important variables.
+- Apply **Factor Analysis (FA)** to identify latent factors that contribute to the differences between universities.
+- Perform **Clustering** to group universities based on their characteristics, providing a clearer segmentation of the education landscape.
+- Investigate relationships between the type of institution (public/private) and their performance metrics.
+
+## 📊 Dataset Information
+
+The dataset used in this project comes from the **Integrated Postsecondary Education Data System (IPEDS)** and contains detailed information on U.S. universities. It was also used in the **1995 Data Analysis Exposition** for the ASA Statistical Graphics Section.
+
+- **Source**: [IPEDS Data Center](https://nces.ed.gov/ipeds/datacenter/InstitutionByGroup.aspx)
+- **Sample Size**: 1000+ U.S. universities
+- **Variables**: The dataset includes variables related to admissions, SAT/ACT scores, tuition, faculty qualifications, and more. Key variables are listed below:
+
+| Variable         | Description                                |
+| ---------------- | ------------------------------------------ |
+| FICE             | Federal ID number                          |
+| X                | College name                               |
+| State            | Postal code of the state                   |
+| Public/private   | Indicator of public (1) or private (2)      |
+| Av_Math_SAT      | Average Math SAT score                     |
+| Av_Verbal_SAT    | Average Verbal SAT score                   |
+| Av_Comb_SAT      | Average Combined SAT score                 |
+| Av_ACT_score     | Average ACT score                          |
+| Top10perc        | % new students from top 10% of H.S. class  |
+| Top25perc        | % new students from top 25% of H.S. class  |
+| In-state         | In-state tuition cost                      |
+| Out-of-state     | Out-of-state tuition cost                  |
+| Room_board       | Room and board costs                       |
+| Instructional    | Instructional expenditure per student      |
+| Grad_Rate        | Graduation rate                            |
+| ...and more.     |
+
+For a complete list of variables, please refer to the dataset.
+
+## 🛠️ Methods
+
+1. **Principal Component Analysis (PCA)**:  
+   PCA was used to reduce the number of variables while maintaining the variance in the dataset. This helped in identifying the most important factors influencing university performance.
+
+2. **Factor Analysis (FA)**:  
+   FA was applied to uncover latent variables that may not be directly measurable but still affect university rankings and classifications.
+
+3. **Clustering**:  
+   K-means and hierarchical clustering methods were employed to group universities into distinct categories based on their characteristics, such as tuition costs, student/faculty ratios, and graduation rates.
+
+## 🚀 Results and Insights
+
+- **Segmentation of Universities**: We were able to separate universities into clear clusters, revealing insights into what differentiates top-tier institutions from others.
+- **Key Factors**: Through FA and PCA, it was found that variables such as graduation rate, instructional spending, and SAT/ACT scores are major differentiators between public and private institutions.
+- **Impact of Student/Faculty Ratio**: Universities with a lower student/faculty ratio tend to have higher graduation rates and a greater percentage of alumni donations.
+
+## 📌 Attributions: 
 Please, refer to the original creator, i.e. me (Jorge Garcelán), for any reproduction of this project.
 
-
-# Data: 
-
-I have considered a dataset that can be found in the web of the Integrated Postsecondary Education Data System, IPEDS. This dataset was also considered in the USNEWS for the ASA Statistical Graphics Section's of 1995 Data Analysis Exposition. This dataset contains information on over 1000 American colleges and universities. The dataset can be found in the following link: <https://nces.ed.gov/ipeds/datacenter/InstitutionByGroup.aspx>. The following variables have been considered:  
-
-
-Variable         | Information
----------------- | ------------
-FICE             | Federal ID number
-X                | College name
-State            | Postal code of the state
-Public/private   | Indicator of public=1, private=2
-Av_Math_SAT      | Average Math SAT score
-Av_Verbal_SAT    | Average Verbal SAT score
-Av_Comb_SAT      | Average Combined SAT score
-Av_ACT_score     | Average ACT score
-1Q_Math_SAT      | First quantile - Math SAT
-3Q_Math_SAT      | Third quantile - Math SAT
-1Q_Verbal_SAT    | First quantile - Verbal SAT
-3Q_Verbal_SAT    | Third quantile - Verbal SAT
-1Q_ACT           | First quantile - ACT
-3Q_ACT           | Third quantile - ACT
-Apps             | Number of applications received
-Accepted         | Number of applicants accepted
-Enrolled         | Number of new students enrolled
-Top10perc        | Pct. new students from top 10% of H.S. class
-Top25perc        | Pct. new students from top 25% of H.S. class
-Full_Under       | Number of fulltime undergraduates
-Part_Under       | Number of parttime undergraduates
-In-state         | In-state tuition
-Out-of-state     | Out-of-state tuition
-Room_board       | Room and board costs
-Room             | Room costs
-Board            | Board costs
-Fees             | Additional fees
-Book             | Estimated book costs
-Personal         | Estimated personal spending
+imated personal spending
 Faculty_PhD      | Pct. of faculty with Ph.D.'s
 Faculty_Terminal | Pct. of faculty with terminal degree
 SF_Ratio         | Student/faculty ratio
