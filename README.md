@@ -55,14 +55,13 @@ For a complete list of variables, please refer to the dataset.
 - **Key Factors**: Through FA and PCA, it was found that variables such as graduation rate, instructional spending, and SAT/ACT scores are major differentiators between public and private institutions.
 - **Impact of Student/Faculty Ratio**: Universities with a lower student/faculty ratio tend to have higher graduation rates and a greater percentage of alumni donations.
 
-## 📌 Attributions: 
-Please, refer to the original creator, i.e. me (Jorge Garcelán), for any reproduction of this project.
+## 📄 Attribution
 
-imated personal spending
-Faculty_PhD      | Pct. of faculty with Ph.D.'s
-Faculty_Terminal | Pct. of faculty with terminal degree
-SF_Ratio         | Student/faculty ratio
-Perc_Donate      | Pct.alumni who donate
-Instructional    | Instructional expenditure per student
-Grad_Rate        | Graduation rate
+This project was created and maintained by **Jorge Garcelán**.  
+If you use or reference this work, please attribute it to the original creator.
+
+## 📬 Contact
+
+For further inquiries or dataset requests, feel free to reach out via email:  
+📧 [jorgegarcelan@gmail.com](mailto:jorgegarcelan@gmail.com)
 
