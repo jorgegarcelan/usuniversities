@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Manrope, Newsreader } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const sans = Manrope({ subsets: ["latin"], variable: "--font-sans" });
@@ -40,7 +41,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" data-scroll-behavior="smooth">
-      <body className={`${sans.variable} ${serif.variable}`}>{children}</body>
+      <body className={`${sans.variable} ${serif.variable}`}>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
