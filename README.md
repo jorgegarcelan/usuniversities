@@ -1,4 +1,6 @@
-# 🎓 US Universities Analysis
+# College by College
+
+**An unsupervised-learning exploration of U.S. higher education.**
 
 This project focuses on analyzing data from over 1000 universities in the United States using **unsupervised learning techniques** such as Principal Component Analysis (PCA), Factor Analysis (FA), and clustering. The goal is to categorize universities by key characteristics, such as whether they are public or private, and measure their quality based on several academic and financial variables. Through this analysis, we aim to gain a broader understanding of the U.S. post-secondary education system, providing insights into the factors that differentiate universities.
 
@@ -64,4 +66,3 @@ If you use or reference this work, please attribute it to the original creator.
 
 For further inquiries or dataset requests, feel free to reach out via email:  
 📧 [jorgegarcelan@gmail.com](mailto:jorgegarcelan@gmail.com)
-
