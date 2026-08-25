@@ -1,68 +1,126 @@
 # College by College
 
-**An unsupervised-learning exploration of U.S. higher education.**
+![College by College social preview](./public/og.png)
 
-This project focuses on analyzing data from over 1000 universities in the United States using **unsupervised learning techniques** such as Principal Component Analysis (PCA), Factor Analysis (FA), and clustering. The goal is to categorize universities by key characteristics, such as whether they are public or private, and measure their quality based on several academic and financial variables. Through this analysis, we aim to gain a broader understanding of the U.S. post-secondary education system, providing insights into the factors that differentiate universities.
+An editorial, interactive data story about the structure of U.S. higher education.
 
-## ✨ Objectives
+College by College turns a 2021 Statistical Learning project into an accessible web experience. It uses a historical dataset of 1,302 American colleges and 35 variables to explore institutional distinction, scale, selectivity, outcomes, and the public–private divide through unsupervised learning.
 
-- Use **PCA** to reduce the dimensionality of the data while retaining the most important variables.
-- Apply **Factor Analysis (FA)** to identify latent factors that contribute to the differences between universities.
-- Perform **Clustering** to group universities based on their characteristics, providing a clearer segmentation of the education landscape.
-- Investigate relationships between the type of institution (public/private) and their performance metrics.
+> This is a historical analysis and an educational case study — not a current university ranking or admissions guide.
 
-## 📊 Dataset Information
+## What is included
 
-The dataset used in this project comes from the **Integrated Postsecondary Education Data System (IPEDS)** and contains detailed information on U.S. universities. It was also used in the **1995 Data Analysis Exposition** for the ASA Statistical Graphics Section.
+- An editorial landing page explaining the project and its main findings.
+- Notebook figures redrawn for the web rather than embedded as static screenshots.
+- PCA explained-variance and signed-loading charts.
+- A correlation matrix with plain-language variable definitions.
+- Acceptance-rate and graduation-rate distributions.
+- Public/private profile comparisons.
+- An interactive university scatterplot with filters, search, highlighted institutions, and individual detail cards.
+- Interpretation notes explaining what each chart can and cannot show.
+- A dedicated About page covering the objective, dataset, workflow, limitations, authorship, and contact details.
+- Responsive layouts, generated app icons, and Open Graph/social metadata.
 
-- **Source**: [IPEDS Data Center](https://nces.ed.gov/ipeds/datacenter/InstitutionByGroup.aspx)
-- **Sample Size**: 1000+ U.S. universities
-- **Variables**: The dataset includes variables related to admissions, SAT/ACT scores, tuition, faculty qualifications, and more. Key variables are listed below:
+## Main findings
 
-| Variable         | Description                                |
-| ---------------- | ------------------------------------------ |
-| FICE             | Federal ID number                          |
-| X                | College name                               |
-| State            | Postal code of the state                   |
-| Public/private   | Indicator of public (1) or private (2)      |
-| Av_Math_SAT      | Average Math SAT score                     |
-| Av_Verbal_SAT    | Average Verbal SAT score                   |
-| Av_Comb_SAT      | Average Combined SAT score                 |
-| Av_ACT_score     | Average ACT score                          |
-| Top10perc        | % new students from top 10% of H.S. class  |
-| Top25perc        | % new students from top 25% of H.S. class  |
-| In-state         | In-state tuition cost                      |
-| Out-of-state     | Out-of-state tuition cost                  |
-| Room_board       | Room and board costs                       |
-| Instructional    | Instructional expenditure per student      |
-| Grad_Rate        | Graduation rate                            |
-| ...and more.     |
+The analysis uses three complementary unsupervised-learning approaches:
 
-For a complete list of variables, please refer to the dataset.
+1. **Principal Component Analysis (PCA)** reduces correlated measures to a smaller set of synthetic dimensions. The first two components retain **61.7%** of the variance.
+2. **Factor Analysis (FA)** identifies latent forces that can be interpreted as institutional distinction and popularity/scale.
+3. **Clustering** compares K-means, Mahalanobis K-means, hierarchical clustering, PAM, and kernel K-means using two- and three-cluster solutions.
 
-## 🛠️ Methods
+Across the models, three broad patterns emerge:
 
-1. **Principal Component Analysis (PCA)**:  
-   PCA was used to reduce the number of variables while maintaining the variance in the dataset. This helped in identifying the most important factors influencing university performance.
+- Graduation rate, instructional spending, academic preparation, cost, and alumni giving tend to move together.
+- Acceptance rate and student–faculty ratio often move in the opposite direction from that distinction profile.
+- Undergraduate population and public/private status strongly shape the second component and several cluster solutions.
 
-2. **Factor Analysis (FA)**:  
-   FA was applied to uncover latent variables that may not be directly measurable but still affect university rankings and classifications.
+These are patterns within this dataset. Component names and cluster labels are interpretations, not official classifications.
 
-3. **Clustering**:  
-   K-means and hierarchical clustering methods were employed to group universities into distinct categories based on their characteristics, such as tuition costs, student/faculty ratios, and graduation rates.
+## Understanding the visualizations
 
-## 🚀 Results and Insights
+Every chart includes a local variable guide and an interpretation note:
 
-- **Segmentation of Universities**: We were able to separate universities into clear clusters, revealing insights into what differentiates top-tier institutions from others.
-- **Key Factors**: Through FA and PCA, it was found that variables such as graduation rate, instructional spending, and SAT/ACT scores are major differentiators between public and private institutions.
-- **Impact of Student/Faculty Ratio**: Universities with a lower student/faculty ratio tend to have higher graduation rates and a greater percentage of alumni donations.
+- **Observed charts** — histograms and the scatterplot display recorded measures directly.
+- **PCA charts** — component scores are weighted combinations of variables, not raw measures or rankings.
+- **Loading charts** — longer bars indicate greater influence; direction shows whether a variable raises or lowers the component score. A PCA axis can be sign-reversed without changing the model.
+- **Correlation matrix** — color and intensity show linear association, not causation.
+- **Clusters** — groups depend on preprocessing, scaling, distance, selected variables, and the chosen number of clusters.
 
-## 📄 Attribution
+The interactive scatterplot compares:
 
-This project was created and maintained by **Jorge Garcelán**.  
-If you use or reference this work, please attribute it to the original creator.
+- **X-axis — Acceptance rate:** accepted applications divided by applications received.
+- **Y-axis — Graduation rate:** the percentage of students who complete their degree.
+- **Color — Institution type:** public or private; color does not indicate performance.
 
-## 📬 Contact
+Caltech, Harvard, UC Berkeley, and UT Austin are labelled as recognizable reference points.
 
-For further inquiries or dataset requests, feel free to reach out via email:  
-📧 [jorgegarcelan@gmail.com](mailto:jorgegarcelan@gmail.com)
+## Dataset
+
+The source data comes from the **Integrated Postsecondary Education Data System (IPEDS)** and was used in the **1995 ASA Statistical Graphics Data Exposition**.
+
+- Raw institutions: **1,302**
+- Raw variables: **35**
+- Areas covered: admissions, test scores, enrolment, tuition, living costs, faculty qualifications, student–faculty ratio, alumni donations, instructional expenditure, and graduation outcomes.
+- Local source: [`collegedata.csv`](./collegedata.csv)
+- Original rendered analysis: [`Universities_Homework.html`](./Universities_Homework.html)
+- IPEDS: [IPEDS Data Center](https://nces.ed.gov/ipeds/datacenter/InstitutionByGroup.aspx)
+
+The website derives measures such as acceptance rate, estimated total cost, and total undergraduate population from the raw columns. Records with invalid or incomplete measures required by the interactive chart are excluded from that view.
+
+## Tech stack
+
+- Next.js App Router
+- React
+- TypeScript
+- Server-side CSV parsing
+- Native HTML and CSS visualizations
+
+The project intentionally avoids a charting dependency: the figures are rendered with semantic components and CSS so their labels, explanations, and responsive behaviour remain part of the page.
+
+## Run locally
+
+Requirements: a current Node.js LTS release and npm.
+
+```bash
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000). If that port is occupied, Next.js will select another available port.
+
+Create a production build with:
+
+```bash
+npm run build
+npm start
+```
+
+## Project structure
+
+```text
+app/
+├── about/page.tsx                 # Methodology, limitations, and contact
+├── components/
+│   ├── NotebookFigures.tsx        # PCA, correlation, and distribution figures
+│   ├── SiteHeader.tsx             # Shared navigation and identity
+│   └── UniversityExplorer.tsx     # Interactive scatterplot and filters
+├── globals.css                    # Visual system and responsive layouts
+├── icon.tsx                       # Generated favicon
+├── apple-icon.tsx                 # Generated Apple touch icon
+├── layout.tsx                     # Metadata, fonts, and social preview
+└── page.tsx                       # Main data story
+lib/
+└── universities.ts               # CSV parsing and derived measures
+public/
+└── og.png                         # Open Graph image
+```
+
+## Contact
+
+Created by **Jorge Garcelán Gómez** as a Statistical Learning project at Universidad Carlos III de Madrid.
+
+- Email: [jorgegarcelan@gmail.com](mailto:jorgegarcelan@gmail.com)
+- LinkedIn: [linkedin.com/in/jgarcelan](https://www.linkedin.com/in/jgarcelan)
+- GitHub: [github.com/jorgegarcelan](https://github.com/jorgegarcelan)
+- Website: [jorgegarcelan.com](https://jorgegarcelan.com)
